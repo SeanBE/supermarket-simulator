@@ -16,6 +16,7 @@ class Supermarket(factory: ActorRefFactory => ActorRef, numTills: Int = 2)
   override def preStart(): Unit = {
     log.info("Supermarket open for business.")
     for (i <- 0 until numTills) {
+      //TODO how can we feed names to actor using factory approach?
       tills += factory(context)
     }
   }
