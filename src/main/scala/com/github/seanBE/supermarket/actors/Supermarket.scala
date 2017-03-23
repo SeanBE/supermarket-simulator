@@ -10,15 +10,31 @@ class Supermarket(factory: ActorRefFactory => ActorRef, numTills: Int = 2)
 
   val stock = Map[Product, Int](Eggs -> 15, Bacon -> 15, Booze -> 15)
   var tills = scala.collection.mutable.Queue.empty[ActorRef]
+  var customers = Set[ActorRef]()
+  var customerCount = 0
 
-  override def receive = Actor.emptyBehavior
+  override def receive = {
+      case Supermarket.NewCustomer => {
+        val customer = context.actorOf(Customer.props(5), "c" + customerCount)
+
+        customerCount += 1
+        customers += customer
+
+        customer ! Customer.EnterShop
+      }
+  }
 
   override def preStart(): Unit = {
     log.info("Supermarket open for business.")
     for (i <- 0 until numTills) {
-      //TODO how can we feed names to actor using factory approach?
+      // TODO how can we feed names to actor using factory approach?
       tills += factory(context)
     }
+  }
+
+  override def postStop(): Unit = {
+    super.postStop()
+    log.info("{} customers visited the supermarket.", customerCount)
   }
 }
 

@@ -18,6 +18,14 @@ object Application extends App {
     val deadLetterMonitor = system.actorOf(DeadLetterMonitor.props, "dLetterMonitor")
     system.eventStream.subscribe(deadLetterMonitor, classOf[DeadLetter])
 
+    // TODO use routing.
+    // Create new Customer Actor every 2 seconds.
+    system.scheduler.schedule(
+        Duration.Zero,
+        Duration.create(2, TimeUnit.SECONDS),
+        supermarket,
+        Supermarket.NewCustomer)
+
     try {
       // Run simulation for 30 seconds.
       system.awaitTermination(Duration.create(30, TimeUnit.SECONDS))
