@@ -2,9 +2,10 @@ package com.github.seanBE.supermarket
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
-import akka.actor.{ActorSystem, ActorRefFactory, DeadLetter}
+import akka.actor.{ActorSystem, DeadLetter}
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import actors.utils._
 import actors.{Supermarket, Till, DeadLetterMonitor}
 
 object Application extends App {
@@ -12,7 +13,7 @@ object Application extends App {
     // Init system and create manager actor.
     val system = ActorSystem("SupermarketSystem")
 
-    val tillMaker = (f: ActorRefFactory) => f.actorOf(Till.props)
+    val tillMaker:NamedActorFactory = (ctx, name) => ctx.actorOf(Till.props, name)
     val supermarket = system.actorOf(Supermarket.props(tillMaker, 2), "superMarket")
 
     val deadLetterMonitor = system.actorOf(DeadLetterMonitor.props, "dLetterMonitor")
@@ -28,6 +29,7 @@ object Application extends App {
 
     try {
       // Run simulation for 30 seconds.
+      // TODO deprecated..use Future with gracefulStop.
       system.awaitTermination(Duration.create(30, TimeUnit.SECONDS))
     } catch {
       case e: Throwable => system.shutdown()

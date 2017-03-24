@@ -1,9 +1,10 @@
 package com.github.seanBE.supermarket.actors
 
-import akka.actor.{ActorSystem, ActorRefFactory}
 import org.scalatest._
-import akka.testkit.{ImplicitSender, TestKit, TestActorRef, TestProbe}
 import scala.collection.mutable.ListBuffer
+import utils._
+import akka.actor.{ActorSystem, ActorRefFactory}
+import akka.testkit.{ImplicitSender, TestKit, TestActorRef, TestProbe}
 
 class SupermarketSpec extends TestKit(ActorSystem("SupermarketSpec"))
   with ImplicitSender with WordSpecLike with BeforeAndAfterAll with Matchers {
@@ -17,14 +18,13 @@ class SupermarketSpec extends TestKit(ActorSystem("SupermarketSpec"))
         val expectedTillCount = 4
         val probes = ListBuffer.empty[(TestProbe)]
 
-        // test factory.
-        val maker = (_: ActorRefFactory) => {
+        val faker:NamedActorFactory = (ctx, name) => {
             val probe = TestProbe()
             probes += probe
             probe.ref
           }
 
-        val supermarket = TestActorRef(Supermarket.props(maker, expectedTillCount))
+        val supermarket = TestActorRef(Supermarket.props(faker, expectedTillCount))
         assert(probes.size == expectedTillCount)
       }
   }
