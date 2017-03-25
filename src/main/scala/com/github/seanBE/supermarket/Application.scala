@@ -6,14 +6,19 @@ import akka.actor.{ActorSystem, DeadLetter}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import actors.utils._
-import actors.{Supermarket, Till, DeadLetterMonitor}
+import actors.{Supermarket, Till, DeadLetterMonitor, Cashier}
 
 object Application extends App {
 
     // Init system and create manager actor.
     val system = ActorSystem("SupermarketSystem")
 
-    val tillMaker:NamedActorFactory = (ctx, name) => ctx.actorOf(Till.props, name)
+    val tillMaker:NamedActorFactory = (ctx, name) => {
+      // TODO this is not scalable...
+      val cashier = ctx.actorOf(Cashier.props)
+      ctx.actorOf(Till.props(cashier), name)
+    }
+
     val supermarket = system.actorOf(Supermarket.props(tillMaker, 2), "superMarket")
 
     val deadLetterMonitor = system.actorOf(DeadLetterMonitor.props, "dLetterMonitor")
