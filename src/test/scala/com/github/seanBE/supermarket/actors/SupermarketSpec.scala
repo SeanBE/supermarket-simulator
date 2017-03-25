@@ -6,12 +6,7 @@ import utils._
 import akka.actor.{ActorSystem, ActorRefFactory}
 import akka.testkit.{ImplicitSender, TestKit, TestActorRef, TestProbe}
 
-class SupermarketSpec extends TestKit(ActorSystem("SupermarketSpec"))
-  with ImplicitSender with WordSpecLike with BeforeAndAfterAll with Matchers {
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(system)
-  }
+class SupermarketSpec extends ActorSpec {
 
   "a Supermarket" must {
       "generate a number of tills" in {

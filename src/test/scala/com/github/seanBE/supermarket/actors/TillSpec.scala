@@ -9,15 +9,7 @@ import scala.concurrent.Await
 import akka.pattern.ask
 import scala.util.Success
 
-class TillSpec extends TestKit(ActorSystem("TillSpec"))
-  with ImplicitSender
-  with WordSpecLike
-  with BeforeAndAfterAll
-  with Matchers {
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(system)
-  }
+class TillSpec extends ActorSpec {
 
   "A Till " must {
         "accept JoinTill requests" in {

@@ -9,15 +9,7 @@ import scala.concurrent.Await
 import akka.pattern.ask
 import scala.util.Success
 
-class CashierSpec extends TestKit(ActorSystem("CashierSpec"))
-  with ImplicitSender
-  with WordSpecLike
-  with BeforeAndAfterAll
-  with Matchers {
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(system)
-  }
+class CashierSpec extends ActorSpec {
 
   "A Cashier using implicit sender " must {
       "say hello" in {
