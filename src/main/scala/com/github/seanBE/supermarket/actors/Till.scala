@@ -1,8 +1,8 @@
 package com.github.seanBE.supermarket.actors
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable.Set
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import scala.concurrent.ExecutionContext.Implicits.global
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Status}
 
 class Till(cashier: ActorRef) extends Actor with ActorLogging {
 
@@ -15,6 +15,9 @@ class Till(cashier: ActorRef) extends Actor with ActorLogging {
       log.info("{} joining {} ({} in line).", sender.path.name, self.path.name, queue.size)
       queue += sender
       sender ! cashier
+    case Till.LeaveTill =>
+      log.info("{} leaving {}.", sender.path.name, self.path.name)
+      queue -= sender
 
     case _ => log.info("Unknown request.")
   }
@@ -23,4 +26,5 @@ class Till(cashier: ActorRef) extends Actor with ActorLogging {
 object Till {
   def props(cashier: ActorRef) = Props(new Till(cashier))
   case object JoinTill
+  case object LeaveTill
 }

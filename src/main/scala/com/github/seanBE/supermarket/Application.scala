@@ -37,6 +37,8 @@ object Application extends App {
       // TODO deprecated..use Future with gracefulStop.
       system.awaitTermination(Duration.create(30, TimeUnit.SECONDS))
     } catch {
-      case e: Throwable => system.terminate()
+      case e: akka.pattern.AskTimeoutException => e.printStackTrace
+    } finally {
+      system.terminate()
     }
 }
