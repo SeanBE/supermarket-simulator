@@ -37,6 +37,6 @@ object Application extends App {
       // TODO deprecated..use Future with gracefulStop.
       system.awaitTermination(Duration.create(30, TimeUnit.SECONDS))
     } catch {
-      case e: Throwable => system.shutdown()
+      case e: Throwable => system.terminate()
     }
 }
